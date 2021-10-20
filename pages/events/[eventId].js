@@ -3,6 +3,7 @@ import EventSummary from '../../components/event-detail/event-summary';
 import EventLogistics from '../../components/event-detail/event-logistics';
 import EventContent from '../../components/event-detail/event-content';
 import ErrorAlert from '../../components/ui/error-alert';
+import Head from 'next/head';
 
 function EventDetailPage(props) {
   const event = props.selectedEvent;
@@ -17,6 +18,10 @@ function EventDetailPage(props) {
 
   return (
     <>
+      <Head>
+        <title>{event.title}</title>
+        <meta name="decription" content={event.description} />
+      </Head>
       <EventSummary title={event.title} />
       <EventLogistics event={event} />
       <EventContent>
