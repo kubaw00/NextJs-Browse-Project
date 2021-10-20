@@ -1,19 +1,51 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
+import useSWR from 'swr';
 import { useRouter } from 'next/router';
-import { getFilteredEvents } from '../../helpers/api-util';
 import EventList from '../../components/events/event-list';
 import ResultsTitle from '../../components/events/results-title';
 import Button from '../../components/ui/button';
 import ErrorAlert from '../../components/ui/error-alert';
 
 function FilteredEventsPage(props) {
-  // const filteredData = useRouter().query.slug;
+  const [loadedEvents, setLoadedEvents] = useState();
 
-  // if (!filteredData) {
-  //   return <p className="center">Loading...</p>;
-  // }
+  const filteredData = useRouter().query.slug;
 
-  if (props.hasError) {
+  const fetcher = (url) => fetch(url).then((res) => res.json());
+  const { data, error } = useSWR(
+    'https://nextjs-course-84a37-default-rtdb.europe-west1.firebasedatabase.app/events.json',
+    fetcher
+  );
+
+  useEffect(() => {
+    if (data) {
+      const events = [];
+
+      for (const key in data) {
+        events.push({
+          ...data[key],
+        });
+      }
+      setLoadedEvents(events);
+    }
+  }, []);
+
+  if (!loadedEvents) {
+    return <p className="center">Loading...</p>;
+  }
+
+  const filteredYear = +filteredData[0];
+  const filteredMonth = +filteredData[1];
+
+  if (
+    isNaN(filteredYear) ||
+    isNaN(filteredMonth) ||
+    filteredYear > 2030 ||
+    filteredYear < 2021 ||
+    filteredMonth < 1 ||
+    filteredMonth > 12 ||
+    error
+  ) {
     return (
       <>
         <ErrorAlert>
@@ -27,7 +59,13 @@ function FilteredEventsPage(props) {
     );
   }
 
-  const filteredEvents = props.events;
+  const filteredEvents = loadedEvents.filter((event) => {
+    const eventDate = new Date(event.date);
+    return (
+      eventDate.getFullYear() === filteredYear &&
+      eventDate.getMonth() === filteredMonth - 1
+    );
+  });
 
   if (!filteredEvents || filteredEvents.length === 0) {
     return (
@@ -43,7 +81,7 @@ function FilteredEventsPage(props) {
     );
   }
 
-  const date = new Date(props.date.year, props.date.month - 1);
+  const date = new Date(filteredYear, filteredMonth - 1);
 
   return (
     <>
@@ -53,47 +91,47 @@ function FilteredEventsPage(props) {
   );
 }
 
-export async function getServerSideProps(context) {
-  const { params } = context;
+// export async function getServerSideProps(context) {
+//   const { params } = context;
 
-  const filteredData = params.slug;
+//   const filteredData = params.slug;
 
-  const filteredYear = +filteredData[0];
-  const filteredMonth = +filteredData[1];
+//   const filteredYear = +filteredData[0];
+//   const filteredMonth = +filteredData[1];
 
-  if (
-    isNaN(filteredYear) ||
-    isNaN(filteredMonth) ||
-    filteredYear > 2030 ||
-    filteredYear < 2021 ||
-    filteredMonth < 1 ||
-    filteredMonth > 12
-  ) {
-    return {
-      props: {
-        hasError: true,
-      },
+//   if (
+//     isNaN(filteredYear) ||
+//     isNaN(filteredMonth) ||
+//     filteredYear > 2030 ||
+//     filteredYear < 2021 ||
+//     filteredMonth < 1 ||
+//     filteredMonth > 12
+//   ) {
+//     return {
+//       props: {
+//         hasError: true,
+//       },
 
-      // notFound: true,
-      // redirect: {
-      //   destination: '/error'
-      // }
-    };
-  }
-  const filteredEvents = await getFilteredEvents({
-    year: filteredYear,
-    month: filteredMonth,
-  });
+//       // notFound: true,
+//       // redirect: {
+//       //   destination: '/error'
+//       // }
+//     };
+//   }
+//   const filteredEvents = await getFilteredEvents({
+//     year: filteredYear,
+//     month: filteredMonth,
+//   });
 
-  return {
-    props: {
-      events: filteredEvents,
-      date: {
-        year: filteredYear,
-        month: filteredMonth,
-      },
-    },
-  };
-}
+//   return {
+//     props: {
+//       events: filteredEvents,
+//       date: {
+//         year: filteredYear,
+//         month: filteredMonth,
+//       },
+//     },
+//   };
+// }
 
 export default FilteredEventsPage;
