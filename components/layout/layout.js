@@ -12,9 +12,7 @@ function Layout(props) {
     <>
       <MainHeader />
       <main>{props.children}</main>
-      {activeNotification && (
-        <Notification title="test" message="this is a test" status="pending" />
-      )}
+      {activeNotification && <Notification />}
     </>
   );
 }

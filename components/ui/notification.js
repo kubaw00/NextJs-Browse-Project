@@ -22,6 +22,10 @@ function Notification() {
 
   const activeClasses = `${classes.notification} ${statusClasses}`;
 
+  // setTimeout(() => {
+  //   notificationCtx.hideNotification();
+  // }, 3000);
+
   return (
     <div className={activeClasses} onClick={notificationCtx.hideNotification}>
       <h2>{notificationCtx.notification.title}</h2>
