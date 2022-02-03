@@ -11,6 +11,7 @@ function FilteredEventsPage(props) {
   const [loadedEvents, setLoadedEvents] = useState();
 
   const filteredData = useRouter().query.slug;
+  console.log('slug', filteredData);
 
   const fetcher = (url) => fetch(url).then((res) => res.json());
   const { data, error } = useSWR(
@@ -34,7 +35,7 @@ function FilteredEventsPage(props) {
   let pageHeadData = (
     <Head>
       <title>Filtered Events</title>
-      <meta name="decription" content={`A list of filtered events`} />
+      <meta name='decription' content={`A list of filtered events`} />
     </Head>
   );
 
@@ -42,7 +43,7 @@ function FilteredEventsPage(props) {
     return (
       <>
         {pageHeadData}
-        <p className="center">Loading...</p>
+        <p className='center'>Loading...</p>
       </>
     );
   }
@@ -54,7 +55,7 @@ function FilteredEventsPage(props) {
     <Head>
       <title>Filtered Events</title>
       <meta
-        name="decription"
+        name='decription'
         content={`All events for ${filteredMonth}/${filteredYear}.`}
       />
     </Head>
@@ -73,11 +74,11 @@ function FilteredEventsPage(props) {
       <>
         {pageHeadData}
         <ErrorAlert>
-          <p>Invalit filter, please adjust yout values!</p>
+          <p>Invalid filter, please adjust yout values!</p>
         </ErrorAlert>
 
-        <div className="center">
-          <Button link="/events">Show All Events</Button>
+        <div className='center'>
+          <Button link='/events'>Show All Events</Button>
         </div>
       </>
     );
@@ -98,8 +99,8 @@ function FilteredEventsPage(props) {
           <p>No events found for the chosen filter!</p>
         </ErrorAlert>
 
-        <div className="center">
-          <Button link="/events">Show All Events</Button>
+        <div className='center'>
+          <Button link='/events'>Show All Events</Button>
         </div>
       </>
     );

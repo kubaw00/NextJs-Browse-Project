@@ -3,7 +3,7 @@ export async function getAllEvents() {
     'https://nextjs-course-84a37-default-rtdb.europe-west1.firebasedatabase.app/events.json'
   );
   const data = await response.json();
-
+  console.log(data);
   const events = [];
 
   for (const key in data) {
@@ -11,6 +11,8 @@ export async function getAllEvents() {
       ...data[key],
     });
   }
+
+  console.log(events);
 
   return events;
 }
